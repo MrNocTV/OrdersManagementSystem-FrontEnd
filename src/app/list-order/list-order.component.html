@@ -1,0 +1,24 @@
+<div class="container">
+  <table datatable [dtOptions]="dtOptions" class="row-border hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>First name</th>
+        <th>Last name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let person of persons">
+        <td>{{ person.id }}</td>
+        <td>{{ person.firstName }}</td>
+        <td>{{ person.lastName }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="row">
+    <button (click)="openDialog()" class="btn btn-primary">Add</button>
+  </div>
+</div>
+
+
+
