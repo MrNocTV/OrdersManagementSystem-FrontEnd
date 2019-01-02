@@ -13,14 +13,7 @@ declare var $;
 })
 export class ListOrderComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
-  persons: Person[] = [];
-
-  array = [
-    new Person(1, 'Loc', 'Truong'),
-    new Person(2, 'Phuoc', 'Truong'),
-    new Person(3, 'Tho', 'Truong'),
-    new Person(4, 'Lan', 'Truong')
-  ]
+  orders : Order[] = [];
 
   constructor(private http: HttpClient, public dialog: MatDialog) {
 
@@ -38,9 +31,6 @@ export class ListOrderComponent implements OnInit {
       pageLength: 2,
       responsive: true
     };
-    this.array.forEach(element => {
-      this.persons.push(element);
-    });
 
   }
 }
