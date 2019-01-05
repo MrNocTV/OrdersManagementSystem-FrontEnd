@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { API_URL } from '../app.constants';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material';
-import { OrderComponent } from '../order/order.component';
-import { Subject } from 'rxjs';
-declare var $;
+import { MatDialog, MAT_DIALOG_DATA, MatDialogConfig, MatDialogModule } from '@angular/material';
+import { OrderComponent, Order } from '../order/order.component';
+import { OrdersService } from '../service/data/orders.service';
+import Quagga from 'quagga'
+import { AuthenticationService } from '../service/authentication.service';
 
 @Component({
   selector: 'app-list-order',
@@ -12,35 +12,82 @@ declare var $;
   styleUrls: ['./list-order.component.css']
 })
 export class ListOrderComponent implements OnInit {
-  dtOptions: DataTables.Settings = {};
-  orders : Order[] = [];
+  orders: Order[] = []
+  config: any
+  page: number = 1
+  totalPages: number = 1
+  show = false
 
-  constructor(private http: HttpClient, public dialog: MatDialog) {
-
+  constructor(private http: HttpClient, public dialog: MatDialog, private orderService: OrdersService, private authService:AuthenticationService) {
   }
 
   openDialog(): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '400px';
-    this.dialog.open(OrderComponent, dialogConfig);
+    let dialogRef = this.dialog.open(OrderComponent, dialogConfig);
+    dialogRef.afterClosed()
+      .subscribe(() => {
+        this.loadOrders()
+       })
+  }
+
+  loadOrders() {
+    let username = this.authService.getAuthenticatedUser()
+    this.orders = []
+    this.orderService.retrieveAllOrders(username, this.page - 1).subscribe(
+      data => {
+        data.forEach(e => {
+          if (e.checker != null) {
+            let order = new Order(e.orderCode, e.type.name, e.status.name, e.date, e.customer.name, e.owner.name, e.checker.name);
+            this.orders.push(order);
+          } else {
+            let order = new Order(e.orderCode, e.type.name, e.status.name, e.date, e.customer.name, e.owner.name, undefined);
+            this.orders.push(order);
+          }
+        });
+      },
+      error => {
+        console.log(error)
+      }
+    )
   }
 
   ngOnInit() {
-    this.dtOptions = {
-      pagingType: 'simple_numbers',
-      pageLength: 2,
-      responsive: true
-    };
+    let username = this.authService.getAuthenticatedUser()
+    this.loadOrders()
+    this.orderService.countOrder(username).subscribe(
+      data => {
+        this.config = {
+          currentPage: this.page,
+          itemsPerPage: 10,
+          totalItems: data
+        }
+        this.show = true
+      }, error => {
+        console.log(error)
+      }
+    )
+    
+    
+    // Quagga.init({
+    //   inputStream : {
+    //     name : "Live",
+    //     type : "LiveStream"
+    //   },
+    //   decoder : {
+    //     readers : ["upc_e_reader", "upc_reader"]
+    //   }
+    // }, function() {
+    //     console.log("Initialization finished. Ready to start");
+    //     Quagga.start();
+    // });
 
+    // Quagga.onDetected(data => {
+    //   console.log(data)
+    // })
+  }
+
+  pageChange(event) {
+    this.config['currentPage'] = event
   }
 }
-
-export class Order {
-  code:string
-  type:string
-  status:string
-  createdDate:Date
-  total:number
-  customer:string
-}
-

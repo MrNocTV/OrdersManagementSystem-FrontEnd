@@ -3,22 +3,21 @@
   <div layout="row">
     <mat-form-field appearance="standard" class="input-full-width">
       <mat-label>Order Code</mat-label>
-      <input matInput placeholder="Order's code">
+      <input matInput placeholder="Order's code" [(ngModel)]="order.code" readonly="readonly">
     </mat-form-field>
   </div>
   
   <div layout="row">
     <mat-form-field class="input-full-width">
       <mat-label>Type</mat-label>
-      <mat-select placeholder="Type of order">
-        <mat-option value="option">Shipping</mat-option>
-        <mat-option value="option">Retails</mat-option>
+      <mat-select placeholder="Type of order" [(ngModel)]="order.type">
+        <mat-option [value]="type.name" *ngFor="let type of typeArr">{{ type.name }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
   <div layout="row">
     <mat-form-field class="input-full-width">
-      <input matInput [matDatepicker]="picker" placeholder="Creation Date">
+      <input matInput [matDatepicker]="picker" placeholder="Creation Date" [(ngModel)]="order.createdDate">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -26,9 +25,8 @@
   <div layout="row">
     <mat-form-field class="input-full-width">
       <mat-label>Customer</mat-label>
-      <mat-select placeholder="Type of order">
-        <mat-option value="option">Thuong Vy 1</mat-option>
-        <mat-option value="option">Thuong Vy 2</mat-option>
+      <mat-select placeholder="Type of order" [(ngModel)]="order.customer">
+        <mat-option [value]="customer.name" *ngFor="let customer of customerArr">{{ customer.name }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -40,19 +38,23 @@
   </div>
   <div layout="row">
     <mat-form-field class="input-full-width">
+      <mat-label>Checker</mat-label>
+      <mat-select placeholder="Status of order" [(ngModel)]="order.checker">
+        <mat-option [value]="checker.name" *ngFor="let checker of checkerArr">{{ checker.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div layout="row">
+    <mat-form-field class="input-full-width">
       <mat-label>Status</mat-label>
-      <mat-select placeholder="Type of order">
-        <mat-option value="option">On Creation</mat-option>
-        <mat-option value="option">Submitted</mat-option>
-        <mat-option value="option">Wait for check</mat-option>
-        <mat-option value="option">Being checked</mat-option>
-        <mat-option value="option">Confirmed</mat-option>
+      <mat-select placeholder="Status of order" [(ngModel)]="order.status">
+        <mat-option [value]="status.name" *ngFor="let status of statusArr">{{ status.name }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 </div>
 
 <div mat-dialog-actions>
-  <button mat-button>Add</button>
+  <button mat-button (click)="createOrder()">Add</button>
   <button mat-button (click)="closeDialog()">Cancel</button>
 </div>

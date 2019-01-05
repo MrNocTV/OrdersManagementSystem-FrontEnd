@@ -46,12 +46,11 @@ import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { ErrorComponent } from './error/error.component';
-import { HomeComponent } from './home/home.component';
-import { AboutComponent } from './about/about.component';
-import { ContactComponent } from './contact/contact.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpInterceptorService } from './service/http/http-interceptor.service';
 import { RegisterComponent } from './register/register.component';
+import { AngularFontAwesomeModule } from 'angular-font-awesome';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -64,9 +63,6 @@ import { RegisterComponent } from './register/register.component';
     LoginComponent,
     LogoutComponent,
     ErrorComponent,
-    HomeComponent,
-    AboutComponent,
-    ContactComponent,
     RegisterComponent
   ],
   imports: [
@@ -107,6 +103,8 @@ import { RegisterComponent } from './register/register.component';
     MatDatepickerModule,
     MatAutocompleteModule,
     MatButtonToggleModule,
+    AngularFontAwesomeModule,
+    NgxPaginationModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true }
