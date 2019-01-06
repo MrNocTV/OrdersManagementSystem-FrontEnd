@@ -1,8 +1,9 @@
 <h2 mat-dialog-title>Create Item</h2>
 <div mat-dialog-content>
-    <div id="interactive" class="viewport row">
+    <!-- <div id="interactive" class="viewport row">
       <video autoplay="true" preload="auto" class="input-full-width"></video>
-    </div>
+    </div> -->
+    <div id="scandit-barcode-picker" style="max-width: 1280px; max-height: 80%;"></div>
   <div layout="row">
     <mat-form-field appearance="standard" class="input-full-width">
       <mat-label>Id</mat-label>
@@ -27,3 +28,4 @@
   <button mat-button (click)="createOrder()">Add</button>
   <button mat-button (click)="closeDialog()">Cancel</button>
 </div>
+

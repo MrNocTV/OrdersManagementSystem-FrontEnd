@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node server.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "postinstall": "ng build --aot -prod"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +23,7 @@
     "@angular/platform-browser": "~7.1.0",
     "@angular/platform-browser-dynamic": "~7.1.0",
     "@angular/router": "~7.1.0",
+    "@google-cloud/vision": "^0.24.0",
     "angular-datatables": "^7.0.0",
     "angular-font-awesome": "^3.1.2",
     "bcrypt": "^3.0.3",
@@ -36,13 +38,17 @@
     "quagga": "^0.12.1",
     "rxjs": "~6.3.3",
     "save": "^2.3.3",
+    "scandit-sdk": "^4.0.0",
     "tslib": "^1.9.0",
-    "zone.js": "~0.8.26"
+    "zone.js": "~0.8.26",
+    "@angular/cli": "^7.1.4",
+    "@angular/compiler-cli": "^7.1.4",
+    "typescript": "~3.1.6"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.11.0",
-    "@angular/cli": "~7.1.4",
-    "@angular/compiler-cli": "~7.1.0",
+    "@angular/cli": "^7.1.4",
+    "@angular/compiler-cli": "^7.1.4",
     "@angular/language-service": "~7.1.0",
     "@types/datatables.net": "^1.10.14",
     "@types/hammerjs": "^2.0.36",
