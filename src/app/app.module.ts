@@ -51,6 +51,9 @@ import { HttpInterceptorService } from './service/http/http-interceptor.service'
 import { RegisterComponent } from './register/register.component';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import {NgxPaginationModule} from 'ngx-pagination';
+import { OrderDetailsComponent } from './order-details/order-details.component';
+import {FlexLayoutModule} from "@angular/flex-layout";
+import { ItemComponent } from './item/item.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +66,9 @@ import {NgxPaginationModule} from 'ngx-pagination';
     LoginComponent,
     LogoutComponent,
     ErrorComponent,
-    RegisterComponent
+    RegisterComponent,
+    OrderDetailsComponent,
+    ItemComponent
   ],
   imports: [
     BrowserModule,
@@ -104,12 +109,13 @@ import {NgxPaginationModule} from 'ngx-pagination';
     MatAutocompleteModule,
     MatButtonToggleModule,
     AngularFontAwesomeModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    FlexLayoutModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [OrderComponent]
+  entryComponents: [OrderComponent, ItemComponent]
 })
 export class AppModule { }

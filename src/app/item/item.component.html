@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Create Item</h2>
+<div mat-dialog-content>
+    <div id="interactive" class="viewport row">
+      <video autoplay="true" preload="auto" class="input-full-width"></video>
+    </div>
+  <div layout="row">
+    <mat-form-field appearance="standard" class="input-full-width">
+      <mat-label>Id</mat-label>
+      <input matInput placeholder="Order's code" readonly="readonly">
+    </mat-form-field>
+  </div>
+
+  <div layout="row">
+    <mat-form-field class="input-full-width">
+      <mat-label>Barcode</mat-label>
+      <input matInput placeholder="Item's barcode" readonly="readonly" [(ngModel)]="item.code">
+    </mat-form-field>
+  </div>
+  <div layout="row">
+    <mat-form-field class="input-full-width">
+      <input matInput placeholder="price">
+    </mat-form-field>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="createOrder()">Add</button>
+  <button mat-button (click)="closeDialog()">Cancel</button>
+</div>

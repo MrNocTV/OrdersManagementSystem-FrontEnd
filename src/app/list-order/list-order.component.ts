@@ -5,6 +5,7 @@ import { OrderComponent, Order } from '../order/order.component';
 import { OrdersService } from '../service/data/orders.service';
 import Quagga from 'quagga'
 import { AuthenticationService } from '../service/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-order',
@@ -18,7 +19,8 @@ export class ListOrderComponent implements OnInit {
   totalPages: number = 1
   show = false
 
-  constructor(private http: HttpClient, public dialog: MatDialog, private orderService: OrdersService, private authService:AuthenticationService) {
+  constructor(private http: HttpClient, public dialog: MatDialog, private orderService: OrdersService, private authService:AuthenticationService,
+    private router:Router) {
   }
 
   openDialog(): void {
@@ -27,7 +29,26 @@ export class ListOrderComponent implements OnInit {
     let dialogRef = this.dialog.open(OrderComponent, dialogConfig);
     dialogRef.afterClosed()
       .subscribe(() => {
-        this.loadOrders()
+        let username = this.authService.getAuthenticatedUser()
+        this.orderService.countOrder(username).subscribe(
+          data => {
+            if (data != this.config['totalItems']) {
+              let maxPage = Math.ceil(data / 10)
+              if (maxPage != this.page)
+                this.page = maxPage
+              this.config = {
+              currentPage: this.page,
+              itemsPerPage: 10,
+              totalItems: data
+              }
+              this.show = true
+              this.loadOrders()
+            }
+          }, error => {
+            console.log(error)
+          }
+        )
+        
        })
   }
 
@@ -67,27 +88,16 @@ export class ListOrderComponent implements OnInit {
         console.log(error)
       }
     )
-    
-    
-    // Quagga.init({
-    //   inputStream : {
-    //     name : "Live",
-    //     type : "LiveStream"
-    //   },
-    //   decoder : {
-    //     readers : ["upc_e_reader", "upc_reader"]
-    //   }
-    // }, function() {
-    //     console.log("Initialization finished. Ready to start");
-    //     Quagga.start();
-    // });
-
-    // Quagga.onDetected(data => {
-    //   console.log(data)
-    // })
   }
 
   pageChange(event) {
     this.config['currentPage'] = event
+    this.page = event
+    this.loadOrders()    
+  }
+
+  tableRowClick(orderCode:string) {
+    console.log('click ' + orderCode)
+    this.router.navigate([`orders/order`, orderCode])
   }
 }

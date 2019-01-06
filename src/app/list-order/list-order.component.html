@@ -20,8 +20,8 @@
       </tr>
     </thead>
     <tbody *ngIf="show">
-      <tr *ngFor="let order of orders | paginate: config; index as i">
-        <th scope="row">{{ i + 1 }}</th>
+      <tr *ngFor="let order of orders | paginate: config; index as i" (click)="tableRowClick(order.code)">
+        <th scope="row">{{ i + 1 + (page - 1) * 10 }}</th>
         <td>{{ order.code }}</td>
         <td>{{ order.createdDate | date:'mediumDate' }}</td>
         <td>{{ order.customer }}</td>

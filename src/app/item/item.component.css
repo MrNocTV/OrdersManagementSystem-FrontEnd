@@ -1,0 +1,12 @@
+.input-full-width {
+    width:100%;
+}
+
+video {
+    background-color: gray;
+    max-height: 200px;
+}
+
+div.viewport {
+    max-height: 200px;
+}

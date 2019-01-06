@@ -3,4 +3,9 @@
 @import "~font-awesome/css/font-awesome.css";
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 
-body { padding-bottom: 70px; }
+body { 
+    padding-bottom: 70px;
+    padding-top: 70px;
+    padding-left: 5%;
+    padding-right: 5%; 
+}

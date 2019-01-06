@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if(this.authenticationService.isUserLoggedIn()) {
-      this.router.navigate(['home'])
+      this.router.navigate(['orders'])
     }
   }
 
@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
         console.log(data);
         sessionStorage.setItem(AUTHENTICATED_USER, this.username);
         sessionStorage.setItem(TOKEN, basicAuthHeaderString);
-        this.router.navigate(['home'])
+        this.router.navigate(['orders'])
       },
       error => {
         this.errorMessage = "Invalid username or password"

@@ -121,3 +121,7 @@ export class Customer {
 export class Checker {
   constructor(public name: string) {}
 }
+
+export class Item {
+  constructor(public code: string) {}
+}

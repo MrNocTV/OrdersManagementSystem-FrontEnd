@@ -11,7 +11,7 @@ export class OrdersService {
   constructor(private http: HttpClient) { }
 
   retrieveAllOrders(username: string, page: number) {
-    return this.http.get<Array<any>>(`${API_URL}/api/orders/users/${username}/${page}`)
+    return this.http.get<Array<any>>(`${API_URL}/api/orders/users/${username}/${page}/page`)
   }
 
   retrieveNextOrderCode(username: string) {
@@ -20,6 +20,10 @@ export class OrdersService {
 
   createOrder(order: Order) {
     return this.http.post(`${API_URL}/api/orders`, order)
+  }
+
+  retrieveOrder(username: string, orderCode: string) {
+    return this.http.get<any>(`${API_URL}/api/orders/users/${username}/${orderCode}`)
   }
 
   countOrder(username: string) {
