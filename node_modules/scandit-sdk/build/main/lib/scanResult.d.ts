@@ -1,0 +1,19 @@
+import { Barcode } from "./barcode";
+import { ImageSettings } from "./imageSettings";
+/**
+ * A result of a scanning operation on an image.
+ */
+export interface ScanResult {
+    /**
+     * The list of barcodes found in the image (can be empty).
+     */
+    readonly barcodes: Barcode[];
+    /**
+     * The image data given as a byte array, formatted accordingly to the set settings ([[imageSettings]]).
+     */
+    readonly imageData: Uint8ClampedArray;
+    /**
+     * The configuration object defining the properties of the processed image ([[imageData]]).
+     */
+    readonly imageSettings: ImageSettings;
+}

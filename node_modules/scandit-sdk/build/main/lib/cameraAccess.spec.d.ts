@@ -1,0 +1,4 @@
+/**
+ * CameraAccess tests
+ */
+export {};

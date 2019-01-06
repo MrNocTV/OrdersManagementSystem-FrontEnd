@@ -1,0 +1,4 @@
+/**
+ * ScanSettings tests
+ */
+export {};

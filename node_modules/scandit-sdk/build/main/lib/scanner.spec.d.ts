@@ -1,0 +1,4 @@
+/**
+ * Scanner tests
+ */
+export {};
