@@ -83,4 +83,8 @@ export class ItemComponent implements OnInit {
     audio.load();
     audio.play();
   }
+
+  reateOrder() {
+    
+  }
 }
