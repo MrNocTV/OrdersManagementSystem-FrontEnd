@@ -1,4 +1,0 @@
-/**
- * Barcode tests
- */
-export {};

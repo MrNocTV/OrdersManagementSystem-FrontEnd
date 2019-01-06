@@ -1,4 +1,0 @@
-/**
- * CustomError tests
- */
-export {};

@@ -1,4 +1,0 @@
-/**
- * CameraAccess tests
- */
-export {};

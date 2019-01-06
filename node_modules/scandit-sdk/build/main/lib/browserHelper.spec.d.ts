@@ -1,4 +1,0 @@
-/**
- * BrowserHelper tests
- */
-export {};
