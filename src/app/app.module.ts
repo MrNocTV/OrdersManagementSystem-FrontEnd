@@ -33,6 +33,7 @@ import {
   MatToolbarModule,
   MatTooltipModule,
   MatFormFieldModule,
+  MatPaginatorModule,
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -110,6 +111,7 @@ import { ListItemsComponent } from './list-items/list-items.component';
     MatDatepickerModule,
     MatAutocompleteModule,
     MatButtonToggleModule,
+    MatPaginatorModule,
     AngularFontAwesomeModule,
     NgxPaginationModule,
     FlexLayoutModule

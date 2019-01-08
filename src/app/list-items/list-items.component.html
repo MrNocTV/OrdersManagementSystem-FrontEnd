@@ -1,0 +1,43 @@
+<div class="row">
+    <mat-toolbar>Inventory</mat-toolbar>
+</div>
+<div class="row">
+    <mat-progress-bar mode="indeterminate" *ngIf="dataSource.loading$ | async"></mat-progress-bar>
+
+    <mat-table class="items-table mat-elevation-z8" [dataSource]="dataSource">
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index;">{{ i + 1 }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="barcode">
+            <mat-header-cell *matHeaderCellDef>Barcode</mat-header-cell>
+            <mat-cell class="barcode-cell" *matCellDef="let item">{{ item.barcode }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+            <mat-cell class="duration-cell" *matCellDef="let item">{{ item.description }}</mat-cell>
+        </ng-container>
+        
+        <ng-container matColumnDef="inPrice">
+            <mat-header-cell *matHeaderCellDef>Buy price</mat-header-cell>
+            <mat-cell class="inPrice-cell" *matCellDef="let item">{{ item.priceIn }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="outPrice">
+            <mat-header-cell *matHeaderCellDef>Sell price</mat-header-cell>
+            <mat-cell class="outPrice-cell" *matCellDef="let item">{{ item.priceOut }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="inStock">
+                <mat-header-cell *matHeaderCellDef>In stock</mat-header-cell>
+                <mat-cell class="inStock-cell" *matCellDef="let item">{{ item.inStock }}</mat-cell>
+            </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+        <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>
+    </mat-table>
+</div>
+<mat-paginator [length]="length" [pageSize]="3" [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
