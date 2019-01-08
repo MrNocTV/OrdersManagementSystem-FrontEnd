@@ -54,6 +54,7 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import { OrderDetailsComponent } from './order-details/order-details.component';
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { ItemComponent } from './item/item.component';
+import { ListItemsComponent } from './list-items/list-items.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { ItemComponent } from './item/item.component';
     ErrorComponent,
     RegisterComponent,
     OrderDetailsComponent,
-    ItemComponent
+    ItemComponent,
+    ListItemsComponent
   ],
   imports: [
     BrowserModule,

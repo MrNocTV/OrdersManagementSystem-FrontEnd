@@ -6,6 +6,7 @@ import { ErrorComponent } from './error/error.component';
 import { ListOrderComponent } from './list-order/list-order.component';
 import { RouteGuardService } from './service/route-guard.service';
 import { OrderDetailsComponent } from './order-details/order-details.component';
+import { ListItemsComponent } from './list-items/list-items.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'logout', component: LogoutComponent, canActivate: [RouteGuardService] },
   { path: 'orders', component: ListOrderComponent, canActivate: [RouteGuardService] },
   { path: 'orders/order/:orderCode', component: OrderDetailsComponent, canActivate: [RouteGuardService]},
+  { path: 'items', component: ListItemsComponent, canActivate: [RouteGuardService]},
   { path: '**', component: ErrorComponent }
 ];
 
