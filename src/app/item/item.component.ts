@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import Quagga from 'quagga';
 import { Item } from '../order/order.component';
 import { Barcode, BarcodePicker, ScanSettings, configure } from "scandit-sdk";
-import { API_KEY } from '../app.constants';
+import { API_KEY, API_KEY_PROD } from '../app.constants';
 import { isNumber } from 'util';
 
 @Component({
@@ -18,7 +18,7 @@ export class ItemComponent implements OnInit {
 
   ngOnInit() {
     this.item = new Item(undefined, undefined, undefined, undefined, undefined, undefined)
-    configure(API_KEY, {
+    configure(API_KEY_PROD, {
       engineLocation: "../../../assets/build"
     });
     BarcodePicker.create(document.getElementById("scandit-barcode-picker"), {
