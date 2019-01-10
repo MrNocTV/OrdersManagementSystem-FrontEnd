@@ -1,39 +1,41 @@
-<div class="container">
-  <h3>Order List</h3>
-  <input type="text" class="form-control" placeholder="Search for...">
-
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th scope="col">#
-        </th>
-        <th scope="col">Code
-        </th>
-        <th scope="col">Created Date
-        </th>
-        <th scope="col">Customer
-        </th>
-        <th scope="col">Type
-        </th>
-        <th scope="status">Status
-        </th>
-      </tr>
-    </thead>
-    <tbody *ngIf="show">
-      <tr *ngFor="let order of orders | paginate: config; index as i" (click)="tableRowClick(order.code)">
-        <th scope="row">{{ i + 1 + (page - 1) * 10 }}</th>
-        <td>{{ order.code }}</td>
-        <td>{{ order.createdDate | date:'mediumDate' }}</td>
-        <td>{{ order.customer }}</td>
-        <td>{{ order.type }}</td>
-        <td>{{ order.status }}</td>
-      </tr>
-    </tbody>
-  </table>
-  <pagination-controls (pageChange)="pageChange($event)" class="my-pagination" responsive="true" maxSize="5"></pagination-controls>
-
-  <button (click)="openDialog()" class="btn btn-primary">Add</button>
+<div class="row">
+    <mat-toolbar>Orders</mat-toolbar>
 </div>
-<!-- <div id="interactive" class="viewport">
-  <video autoplay="true" preload="auto"></video>
-</div> -->
+<div class="row">
+  <mat-progress-bar mode="indeterminate" *ngIf="dataSource.loading$ | async"></mat-progress-bar>
+  <mat-form-field>
+      <input matInput placeholder="Search" #input>
+  </mat-form-field>
+  <mat-table class="orders-table mat-elevation-z8" [dataSource]="dataSource">
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef fxFlex="5%">#</mat-header-cell>
+      <mat-cell *matCellDef="let element; let i = index;" fxFlex="5%">{{ i + 1 }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="code">
+      <mat-header-cell *matHeaderCellDef>Code</mat-header-cell>
+      <mat-cell class="code-cell" *matCellDef="let order">{{ order.orderCode }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="createdDate">
+      <mat-header-cell *matHeaderCellDef>Created Date</mat-header-cell>
+      <mat-cell class="createdDate-cell" *matCellDef="let order">{{ order.date | date:medium }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="customer">
+      <mat-header-cell *matHeaderCellDef>Customer</mat-header-cell>
+      <mat-cell class="customer-cell" *matCellDef="let order">{{ order.customer.name }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="type">
+      <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+      <mat-cell class="type-cell" *matCellDef="let order">{{ order.type.name }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell class="status-cell" *matCellDef="let order">{{ order.status.name }}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>
+  </mat-table>
+</div>
+<mat-paginator [length]="length" [pageSize]="3" [pageSizeOptions]="[3, 5, 10]"></mat-paginator>

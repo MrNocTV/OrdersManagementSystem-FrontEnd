@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { API_URL } from 'src/app/app.constants';
 import { Order } from 'src/app/order/order.component';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,15 @@ export class OrdersService {
 
   constructor(private http: HttpClient) { }
 
-  retrieveAllOrders(username: string, page: number) {
-    return this.http.get<Array<any>>(`${API_URL}/api/orders/users/${username}/${page}/page`)
+  retrieveAllOrders(username: string, filter = '', sortOrder = '',
+    pageNumber = 0, pageSize = 3): Observable<Order[]> {
+    return this.http.get<Order[]>(`${API_URL}/api/orders/users/${username}`, {
+        params: new HttpParams()
+          .set('filter', filter)
+          .set('sortOrder', sortOrder)
+          .set('pageNumber', pageNumber.toString())
+          .set('pageSize', pageSize.toString())
+    })
   }
 
   retrieveNextOrderCode(username: string) {

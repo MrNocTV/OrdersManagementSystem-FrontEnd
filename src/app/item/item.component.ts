@@ -4,6 +4,7 @@ import Quagga from 'quagga';
 import { Item } from '../order/order.component';
 import { Barcode, BarcodePicker, ScanSettings, configure } from "scandit-sdk";
 import { API_KEY } from '../app.constants';
+import { isNumber } from 'util';
 
 @Component({
   selector: 'app-item',
@@ -16,7 +17,7 @@ export class ItemComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<ItemComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
-    this.item = new Item(undefined)
+    this.item = new Item(undefined, undefined, undefined, undefined, undefined, undefined)
     configure(API_KEY, {
       engineLocation: "../../../assets/build"
     });
@@ -42,35 +43,12 @@ export class ItemComponent implements OnInit {
       barcodePicker.onScan((scanResult) => {
         scanResult.barcodes.reduce((string, barcode) => {
           console.log( string + `${Barcode.Symbology.toHumanizedName(barcode.symbology)}: ${barcode.data}\n`)
-          this.item.code = barcode.data
+          this.item.barcode = barcode.data
           return string + `${Barcode.Symbology.toHumanizedName(barcode.symbology)}: ${barcode.data}\n`
         }, "");
       });
 
     });
-    // Quagga.init({
-    //   inputStream: {
-    //     name: "Live",
-    //     type: "LiveStream"
-    //   },
-    //   decoder: {
-    //     readers: ["ean_reader"]
-    //   }
-    // }, function () {
-    //   console.log("Initialization finished. Ready to start");
-    //   Quagga.start();
-    // });
-
-    // Quagga.onDetected(data => {
-    //   let detectedCode = data.codeResult.code
-    //   if (detectedCode != null && detectedCode != '' && detectedCode != undefined) {
-    //     if(this.item.code == undefined) {
-    //       this.item.code = detectedCode
-    //       console.log("Detected ",detectedCode, "!");
-    //       this.playAudio()
-    //     }
-    //   }
-    // })
   }
 
   public closeDialog() {
@@ -84,7 +62,13 @@ export class ItemComponent implements OnInit {
     audio.play();
   }
 
-  createOrder() {
+  createItem() {
+    if (!this.validateItem()) {
+      alert("Hello Everyone");
+    }
+  }
 
+  validateItem() {
+    return !isNaN(Number(this.item.inStock))
   }
 }

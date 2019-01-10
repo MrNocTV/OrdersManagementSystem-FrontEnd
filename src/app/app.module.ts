@@ -34,6 +34,9 @@ import {
   MatTooltipModule,
   MatFormFieldModule,
   MatPaginatorModule,
+  MatSort,
+  MatSortHeader,
+  MatSortModule,
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -114,7 +117,8 @@ import { ListItemsComponent } from './list-items/list-items.component';
     MatPaginatorModule,
     AngularFontAwesomeModule,
     NgxPaginationModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatSortModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true }

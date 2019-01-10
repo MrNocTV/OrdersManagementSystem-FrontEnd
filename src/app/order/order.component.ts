@@ -123,5 +123,5 @@ export class Checker {
 }
 
 export class Item {
-  constructor(public code: string) {}
+  constructor(public barcode: string, public description:string, public priceIn:string, public priceOut:string, public unit:string, public inStock:string) {}
 }

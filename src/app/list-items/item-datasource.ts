@@ -23,7 +23,7 @@ export class ItemsDataSource implements DataSource<Item> {
         this.loadingSubject.complete()
     }
 
-    loadItems(filter = '', sortDirection = 'asc', pageIndex = 0, pageSize = 3) {
+    loadItems(filter = '', sortDirection = '', pageIndex = 0, pageSize = 3) {
         this.loadingSubject.next(true)
 
         this.itemService.retrieveItems(filter, sortDirection, pageIndex, pageSize).pipe(

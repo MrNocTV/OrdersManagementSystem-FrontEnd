@@ -3,6 +3,9 @@
 </div>
 <div class="row">
     <mat-progress-bar mode="indeterminate" *ngIf="dataSource.loading$ | async"></mat-progress-bar>
+    <mat-form-field>
+        <input matInput placeholder="Search" #input>
+    </mat-form-field>
 
     <mat-table class="items-table mat-elevation-z8" [dataSource]="dataSource">
         <ng-container matColumnDef="id">
@@ -31,12 +34,18 @@
         </ng-container>
 
         <ng-container matColumnDef="inStock">
-                <mat-header-cell *matHeaderCellDef>In stock</mat-header-cell>
-                <mat-cell class="inStock-cell" *matCellDef="let item">{{ item.inStock }}</mat-cell>
-            </ng-container>
+            <mat-header-cell *matHeaderCellDef fxFlex="6%">In stock</mat-header-cell>
+            <mat-cell class="inStock-cell" *matCellDef="let item" fxFlex="5%">{{ item.inStock }}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="customColumn1">
+            <mat-header-cell *matHeaderCellDef fxFlex="5%">
+                <button mat-icon-button color="accent" (click)="openDialog()"><i class="fa fa-plus mat-icon"></i></button>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" fxFlex="7%">
+            </mat-cell>
+        </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
         <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>
     </mat-table>
 </div>
