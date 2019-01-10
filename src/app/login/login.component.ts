@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { API_URL, AUTHENTICATED_USER, TOKEN } from '../app.constants';
+import { API_URL, AUTHENTICATED_USER, TOKEN, API_URL_PROD } from '../app.constants';
 import { map } from 'rxjs/operators';
 import { AuthenticationService } from '../service/authentication.service';
 import { Router } from '@angular/router';
@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
     let headers = new HttpHeaders({
       Authorization: basicAuthHeaderString
     })
-    return this.http.get(`${API_URL}/basicauth/${basicAuthHeaderString}`, { headers }).subscribe(
+    return this.http.get(`${API_URL_PROD}/basicauth/${basicAuthHeaderString}`, { headers }).subscribe(
       data => {
         console.log(data);
         sessionStorage.setItem(AUTHENTICATED_USER, this.username);
