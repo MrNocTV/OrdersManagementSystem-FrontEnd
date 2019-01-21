@@ -9,8 +9,8 @@
 
     <mat-table class="items-table mat-elevation-z8" [dataSource]="dataSource">
         <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
-            <mat-cell *matCellDef="let element; let i = index;">{{ i + 1 }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef fxFlex="5%">#</mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index;" fxFlex="5%">{{ i + 1 }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="barcode">
@@ -39,7 +39,7 @@
         </ng-container>
         <ng-container matColumnDef="customColumn1">
             <mat-header-cell *matHeaderCellDef fxFlex="5%">
-                <button mat-icon-button color="accent" (click)="openDialog()"><i class="fa fa-plus mat-icon"></i></button>
+                <button mat-icon-button color="accent" (click)="openDialog(undefined)"><i class="fa fa-plus mat-icon"></i></button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxFlex="7%">
             </mat-cell>
@@ -49,4 +49,4 @@
         <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>
     </mat-table>
 </div>
-<mat-paginator [length]="length" [pageSize]="3" [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
+<mat-paginator [length]="length" [pageSize]="10" [pageSizeOptions]="[3, 5, 10]"></mat-paginator>

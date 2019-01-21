@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { ItemService } from '../service/data/item.service';
 import { catchError, finalize } from 'rxjs/operators';
 export class Item {
-    constructor(public barcode: string, public description: string, public priceIn:number, public priceOut:number, public inStock:number) { }
+    constructor(public barcode: string, public description: string, public priceIn: number, public priceOut: number, public inStock: number, public imagePath: string, public unit: string) { }
 }
 
 export class ItemsDataSource implements DataSource<Item> {
@@ -23,7 +23,7 @@ export class ItemsDataSource implements DataSource<Item> {
         this.loadingSubject.complete()
     }
 
-    loadItems(filter = '', sortDirection = '', pageIndex = 0, pageSize = 3) {
+    loadItems(filter = '', sortDirection = '', pageIndex = 0, pageSize = 10) {
         this.loadingSubject.next(true)
 
         this.itemService.retrieveItems(filter, sortDirection, pageIndex, pageSize).pipe(

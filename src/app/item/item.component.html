@@ -3,11 +3,14 @@
     <!-- <div id="interactive" class="viewport row">
       <video autoplay="true" preload="auto" class="input-full-width"></video>
     </div> -->
+  <div *ngIf="!show">
+   <img [src]="imageURL" class="rounded" alt="Grokonez-About Image" style="max-width: 337px; max-height: 168.5px;">
+  </div>
   <div id="scandit-barcode-picker" style="max-width: 1280px; max-height: 80%;"></div>
   <div layout="row">
     <mat-form-field class="input-full-width">
       <mat-label>Barcode</mat-label>
-      <input matInput placeholder="Item's barcode" readonly="readonly" [(ngModel)]="item.barcode">
+      <input matInput placeholder="Item's barcode" [(ngModel)]="item.barcode">
     </mat-form-field>
   </div>
   <div layout="row">
@@ -39,8 +42,19 @@
         <input matInput placeholder="Unit" [(ngModel)]="item.unit">
       </mat-form-field>
   </div>
+  <label for="file">Choose File</label>
+  <input type="file"
+         id="file"
+         (change)="handleFileInput($event.target.files)">
 </div>
-
+<div *ngIf="fileToUpload" class="progress">
+    <div class="progress-bar progress-bar-info progress-bar-striped"
+      role="progressbar" attr.aria-valuenow="{{progress.percentage}}"
+      aria-valuemin="0" aria-valuemax="100"
+      [ngStyle]="{width:progress.percentage+'%'}">
+      {{progress.percentage}}%</div>
+</div>
+  
 <div mat-dialog-actions>
   <button mat-button (click)="createItem()">Add</button>
   <button mat-button (click)="closeDialog()">Cancel</button>

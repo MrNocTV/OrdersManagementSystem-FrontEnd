@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { ItemsDataSource } from './item-datasource';
+import { ItemsDataSource, Item } from './item-datasource';
 import { ItemService } from '../service/data/item.service';
-import { MatPaginator, MatSort, MatDialog, MatDialogConfig } from '@angular/material';
+import { MatPaginator, MatSort, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { merge, fromEvent } from 'rxjs';
 import { ItemComponent } from '../item/item.component';
@@ -25,8 +25,8 @@ export class ListItemsComponent implements OnInit, AfterViewInit {
     this.getItemsCount()
   }
 
-  onRowClicked(row) {
-    console.log('Row clicked: ', row);
+  onRowClicked(row: Item) {
+    this.openDialog(row)
   }
 
   ngAfterViewInit() {
@@ -47,7 +47,6 @@ export class ListItemsComponent implements OnInit, AfterViewInit {
     this.paginator.page
       .pipe(
         tap(() => {
-          console.log('tab')
           this.loadItemsPage()
         })
       )
@@ -71,9 +70,24 @@ export class ListItemsComponent implements OnInit, AfterViewInit {
     )
   }
 
-  openDialog() {
+  openDialog(item: Item) {
+    console.log('item', item)
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '400px';
-    let dialogRef = this.dialog.open(ItemComponent, dialogConfig);
+    let dialogRef: MatDialogRef<ItemComponent, any>
+    if (typeof item === 'undefined') {
+      dialogRef = this.dialog.open(ItemComponent, dialogConfig);
+    } else {
+      dialogConfig.data = {
+        item
+      }
+      dialogRef = this.dialog.open(ItemComponent, dialogConfig)
+    }
+    dialogRef.afterClosed().subscribe(
+      result => {
+        this.getItemsCount()
+        this.loadItemsPage()
+      }
+    )
   }
 }

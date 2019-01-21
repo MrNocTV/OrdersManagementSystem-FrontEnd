@@ -23,7 +23,7 @@ export class OrderDataSource implements DataSource<Order> {
     }
 
     loadOrders(filter = '',
-        sortDirection = 'desc', pageIndex = 0, pageSize = 3) {
+        sortDirection = 'desc', pageIndex = 0, pageSize = 10) {
         this.loadingSubject.next(true);
         let username = this.authService.getAuthenticatedUser()
         this.orderService.retrieveAllOrders(username, filter, sortDirection,
