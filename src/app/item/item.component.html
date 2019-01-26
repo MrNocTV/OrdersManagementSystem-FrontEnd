@@ -1,11 +1,30 @@
-<h2 mat-dialog-title>Create Item</h2>
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<mat-progress-bar mode="indeterminate" *ngIf="loadingItem"></mat-progress-bar>
+
 <div mat-dialog-content>
     <!-- <div id="interactive" class="viewport row">
       <video autoplay="true" preload="auto" class="input-full-width"></video>
     </div> -->
   <div *ngIf="!show">
-   <img [src]="imageURL" class="rounded" alt="Grokonez-About Image" style="max-width: 337px; max-height: 168.5px;">
+    <div layout="row" style="margin-bottom: 10px;">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Item Images
+          </mat-panel-title>
+          <mat-panel-description>
+            Click To View
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+    
+        <div *ngFor="let itemImageURL of itemImageURLs">
+          <img [src]="itemImageURL" class="rounded" alt="Item Image" style="max-width: 337px; max-height: 168.5px; margin-bottom: 10px;" (click)="image()" (load)="dosomething()">
+        </div>
+      </mat-expansion-panel>
+    </div>
   </div>
+
   <div id="scandit-barcode-picker" style="max-width: 1280px; max-height: 80%;"></div>
   <div layout="row">
     <mat-form-field class="input-full-width">
@@ -45,9 +64,11 @@
   <label for="file">Choose File</label>
   <input type="file"
          id="file"
-         (change)="handleFileInput($event.target.files)">
+         (change)="handleFileInput($event.target.files)"
+         multiple
+         style="margin-bottom: 10px;">
 </div>
-<div *ngIf="fileToUpload" class="progress">
+<div *ngIf="filesToUpload" class="progress">
     <div class="progress-bar progress-bar-info progress-bar-striped"
       role="progressbar" attr.aria-valuenow="{{progress.percentage}}"
       aria-valuemin="0" aria-valuemax="100"
@@ -55,8 +76,12 @@
       {{progress.percentage}}%</div>
 </div>
   
-<div mat-dialog-actions>
+<div mat-dialog-actions *ngIf="show" align="center">
   <button mat-button (click)="createItem()">Add</button>
+  <button mat-button (click)="closeDialog()">Cancel</button>
+</div>
+<div mat-dialog-actions *ngIf="!show" align="center">
+  <button mat-button (click)="editItem()">Edit</button>
   <button mat-button (click)="closeDialog()">Cancel</button>
 </div>
 

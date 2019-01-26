@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { ItemService } from '../service/data/item.service';
 import { catchError, finalize } from 'rxjs/operators';
 export class Item {
-    constructor(public barcode: string, public description: string, public priceIn: number, public priceOut: number, public inStock: number, public imagePath: string, public unit: string) { }
+    constructor(public barcode: string, public description: string, public priceIn: number, public priceOut: number, public inStock: number, public unit: string) { }
 }
 
 export class ItemsDataSource implements DataSource<Item> {

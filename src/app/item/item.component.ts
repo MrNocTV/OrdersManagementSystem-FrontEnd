@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import Quagga from 'quagga';
 import { Barcode, BarcodePicker, ScanSettings, configure } from "scandit-sdk";
@@ -16,28 +16,51 @@ import { HttpEventType } from '@angular/common/http';
   styleUrls: ['./item.component.css']
 })
 export class ItemComponent implements OnInit {
-  fileToUpload: File = null
+  filesToUpload: File[]
   progress: { percentage: number } = { percentage: 0 }
   item: Item
   show: boolean = true
+  loadingItem: boolean = false
   parentData: Item
-  imageURL : string
+  itemImageURLs : string[]
+  title: string
+
   constructor(private dialogRef: MatDialogRef<ItemComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
     private itemService: ItemService) {
     console.log('data from parent', data)
     if (this.data !== null) {
       this.parentData = data.item
       this.show = false
+      this.title = 'Item Details'
+    } else {
+      this.title = 'Create Item'
     }
   }
 
   ngOnInit() {
-    this.item = new Item(undefined, undefined, undefined, undefined, undefined, undefined, undefined)
+    this.item = new Item(undefined, undefined, undefined, undefined, undefined, undefined)
     if (this.parentData !== null && typeof this.parentData !== 'undefined') {
       console.log('data from parent 1', this.parentData)
       this.show = false
-      this.item = new Item(this.parentData.barcode, this.parentData.description, this.parentData.priceIn, this.parentData.priceOut, this.parentData.inStock, this.parentData.imagePath, this.parentData.unit)
-      this.imageURL = `${API_URL_PROD}/api/items/image/get/${this.item.imagePath}`
+      this.loadingItem = true
+      this.item = new Item(this.parentData.barcode, this.parentData.description, this.parentData.priceIn, this.parentData.priceOut, this.parentData.inStock, this.parentData.unit)
+      this.itemService.getItemImages(this.parentData.barcode).subscribe(
+        data => {
+          let fileNames = data.fileNames
+          console.log(fileNames)
+          this.itemImageURLs = new Array<string>()
+          for(var i = 0; i < fileNames.length; ++i) {
+            let itemImageURL = `${API_URL_PROD}/api/items/image/get/${fileNames[i]}`
+            this.itemImageURLs.push(`${API_URL_PROD}/api/items/image/get/${fileNames[i]}`)
+          }
+          console.log("urls ", this.itemImageURLs)
+          this.loadingItem = false
+        }, error => {
+          console.log('error ', error)
+          this.loadingItem = false
+        }
+      )
+      
     }
     configure(API_KEY, {
       engineLocation: "../../../assets/build"
@@ -105,35 +128,43 @@ export class ItemComponent implements OnInit {
     if (this.item.barcode == '')
       return 'barcode must be included'
 
-    if (this.fileToUpload == null)
-      return "item's image must be included"
+    if (this.filesToUpload === null)
+      return "item's image(s) must be included"
     return 'ok'
   }
 
   handleFileInput(files: FileList) {
     if (files.length > 0) {
-      let selectedFile = files.item(0)
-      let extn = selectedFile.name.split(".").pop()
-      if (extn === 'png' || extn === 'jpeg') {
-        this.fileToUpload = selectedFile
-        this.progress.percentage = 0
-      } else {
+      console.log("files length " + files.length)
+      this.filesToUpload = new Array<File>()
+      for(var i = 0; i < files.length; ++i) {
+        let selectedFile = files.item(i)
+        let fileName = selectedFile.name
+        let extn = fileName.substr(fileName.lastIndexOf('.') + 1);
+        if (extn === 'png' || extn === 'jpeg' || extn === 'jpg') {
+          this.filesToUpload.push(files.item(i))
+        } else {
+          break;
+        }
+      }
+
+      if (this.filesToUpload.length != files.length) {
         swal({
           title: "ERROR",
           text: "Please select .png or .jpeg files",
           icon: "error",
         })
-        this.fileToUpload = null
+        this.filesToUpload = null
       }
-    }
-    else {
-      this.fileToUpload = null
+      this.progress.percentage = 0
     }
   }
 
+
   uploadImage() {
     this.progress.percentage = 0
-    this.itemService.uploadItemImage(this.fileToUpload, this.item.barcode).subscribe(event => {
+
+    this.itemService.uploadItemImage(this.filesToUpload, this.item.barcode).subscribe(event => {
       if (event.type === HttpEventType.UploadProgress) {
         this.progress.percentage = Math.round(100 * event.loaded / event.total)
       }
@@ -149,12 +180,8 @@ export class ItemComponent implements OnInit {
       })
   }
 
-  uploadItem() {
-    // set image path to barcode.extension
-    let extn = this.fileToUpload.name.split(".").pop()
-    let imagePath = this.item.barcode + "." + extn
-    this.item.imagePath = imagePath
 
+  uploadItem() {
     // start uploading item
     this.itemService.createItem(this.item).subscribe(
       data => {
@@ -173,5 +200,21 @@ export class ItemComponent implements OnInit {
         })
       }
     )
+  }
+
+  image() {
+    console.log("CLICK");
+  }
+
+  dosomething() {
+    console.log("do something")
+  }
+
+  editItem() {
+    swal({
+      title: "ERROR",
+      text: "Not implemented yet!!",
+      icon: "error",
+    })
   }
 }

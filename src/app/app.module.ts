@@ -53,9 +53,9 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpInterceptorService } from './service/http/http-interceptor.service';
 import { RegisterComponent } from './register/register.component';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
-import {NgxPaginationModule} from 'ngx-pagination';
+import { NgxPaginationModule } from 'ngx-pagination';
 import { OrderDetailsComponent } from './order-details/order-details.component';
-import {FlexLayoutModule} from "@angular/flex-layout";
+import { FlexLayoutModule } from "@angular/flex-layout";
 import { ItemComponent } from './item/item.component';
 import { ListItemsComponent } from './list-items/list-items.component';
 
@@ -104,7 +104,7 @@ import { ListItemsComponent } from './list-items/list-items.component';
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    MatTooltipModule, 
+    MatTooltipModule,
     MatExpansionModule,
     MatGridListModule,
     MatIconModule,
@@ -117,7 +117,7 @@ import { ListItemsComponent } from './list-items/list-items.component';
     AngularFontAwesomeModule,
     NgxPaginationModule,
     FlexLayoutModule,
-    MatSortModule,
+    MatSortModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true }
