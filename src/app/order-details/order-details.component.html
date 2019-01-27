@@ -1,11 +1,18 @@
-<div class="row">
+<div mat-dialog-content>
+  <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
   <h3>Orders Info</h3>
-</div>
-<div class="row shadow p-3 mb-3 bg-white">
-  <div class="col">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Order Basic Information
+      </mat-panel-title>
+      <mat-panel-description>
+        Click To View
+      </mat-panel-description>
+    </mat-expansion-panel-header>
     <mat-form-field appearance="standard" class="input-full-width">
       <mat-label>Order Code</mat-label>
-      <input matInput placeholder="Order's code" readonly="readonly" [(ngModel)]="order.code">
+      <input matInput placeholder="Order's code" readonly="readonly" [(ngModel)]="order.code" disabled>
     </mat-form-field>
     <mat-form-field class="input-full-width">
       <mat-label>Type</mat-label>
@@ -13,14 +20,12 @@
         <mat-option [value]="type.name" *ngFor="let type of typeArr">{{ type.name }}</mat-option>
       </mat-select>
     </mat-form-field>
-  
+
     <mat-form-field class="input-full-width">
-      <input matInput [matDatepicker]="picker" placeholder="Creation Date" [(ngModel)]="order.createdDate">
+      <input matInput [matDatepicker]="picker" placeholder="Creation Date" [(ngModel)]="order.createdDate" disabled>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-  </div>
-  <div class="col">
     <mat-form-field class="input-full-width">
       <mat-label>Customer</mat-label>
       <mat-select placeholder="Type of order" [(ngModel)]="order.customer">
@@ -40,62 +45,52 @@
         <mat-option [value]="status.name" *ngFor="let status of statusArr">{{ status.name }}</mat-option>
       </mat-select>
     </mat-form-field>
-  </div>
-</div>
+    <div mat-dialog-actions align="center">
+      <button mat-button (click)="updateOrderInfo()">Update</button>
+    </div>
+  </mat-expansion-panel>
 
-<div class="row">
-    <h3>Items</h3>
-  </div>
+  <h3>Items</h3>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        List of Items
+      </mat-panel-title>
+      <mat-panel-description>
+        Click To View
+      </mat-panel-description>
+    </mat-expansion-panel-header>
 
-<div class="row shadow p-3 mb-3 bg-white">
-  <table mat-table [dataSource]="dataSource">
-
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
-        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-      </ng-container>
-  
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-      </ng-container>
-  
-      <!-- Weight Column -->
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-      </ng-container>
-  
-      <!-- Symbol Column -->
-      <ng-container matColumnDef="symbol">
-        <th mat-header-cell *matHeaderCellDef> Symbol </th>
-        <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
-      </ng-container>
-      
-      <ng-container matColumnDef="customColumn1">
-          <mat-header-cell *matHeaderCellDef>
-            <button mat-icon-button color="accent" (click)="openDialog()"><i class="fa fa-plus mat-icon"></i></button>
-          </mat-header-cell>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary" focusable="false" (click)="row.startEdit()">
-              <i class="fa fa-pencil mat-icon"></i>
-            </button>
-            <button mat-icon-button color="primary" focusable="false" (click)="row.cancelOrDelete()">
-              <i class="fa fa-times mat-icon"></i>
-            </button>
-          </td>
-        </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <table>
+      <thead>
+        <tr>
+          <th>Barcode</th>
+          <th>Description</th>
+          <th>Unit</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+          <th><button class="btn"><i class="fa fa-plus" style="color:green;" (click)="itemAddClick()"></i></button></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items;">
+            <td>{{ item.barcode }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.unit }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.price * item.quantity |  number : '1.2' }}</td>
+            <td><button class="btn"><i class="fa fa-close" style="color:red;" (click)="itemRemoveClick(item.barcode)"></i></button></td>
+        </tr>
+      </tbody>
     </table>
-  </div>
 
-<div class="row">
-  <mat-form-field appearance="standard" class="input-full-width">
+  </mat-expansion-panel>
+
+  <mat-form-field appearance="standard" class="input-full-width" style="color:green; font-size: 20pt">
     <mat-label>Total</mat-label>
-    <input matInput readonly="true" value="0.0">
+    <input matInput readonly="true" [ngModel]="total | number : '1.2'" (ngModelChange)="total=$event">
   </mat-form-field>
+
 </div>

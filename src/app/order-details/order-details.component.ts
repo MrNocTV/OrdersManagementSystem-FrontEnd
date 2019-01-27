@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource, MatDialog, MatDialogConfig } from '@angular/material';
-import { Order, Status, Type, Customer, Checker } from '../order/order.component';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatTableDataSource, MatDialog, MatDialogConfig, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { Order, Status, Type, Customer, Checker, Item, OrderItem } from '../order/order.component';
 import { OrdersService } from '../service/data/orders.service';
 import { AuthenticationService } from '../service/authentication.service';
 import { ActivatedRoute } from '@angular/router';
@@ -9,52 +9,36 @@ import { OrderStatusService } from '../service/data/order-status.service';
 import { CustomerService } from '../service/data/customer.service';
 import { UserService } from '../service/data/user.service';
 import { ItemComponent } from '../item/item.component';
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-];
-
 @Component({
   selector: 'app-order-details',
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css']
 })
 export class OrderDetailsComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol', 'customColumn1'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
   order: Order
   statusArr: Status[] = new Array<Status>()
   typeArr: Type[] = new Array<Type>()
   customerArr: Customer[] = new Array<Customer>()
   checkerArr: Checker[] = new Array<Checker>()
+  items: OrderItem[] = [
+    new OrderItem("123", "11111", 12, 23.4, "ccc", "dwda ds"),
+    new OrderItem("1232", "11111", 12, 23.4, "cscc", "dwd2a ds"),
+    new OrderItem("1233", "11111", 12, 23.4, "cccs", "dswda ds"),
+  ]
+  loading: boolean = true
+  total: number = 0
 
   constructor(private orderService: OrdersService, private authService: AuthenticationService, private route: ActivatedRoute,
     private orderTypeService: OrderTypeService, private orderStatusServie: OrderStatusService,
     private customerService: CustomerService, private userService: UserService,
+    private dialogRef: MatDialogRef<OrderDetailsComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
     public dialog: MatDialog) { }
 
   ngOnInit() {
     this.order = new Order(undefined, undefined, undefined, undefined, undefined, undefined, undefined)
     let username = this.authService.getAuthenticatedUser()
-    let orderCode = this.route.snapshot.params['orderCode']
+    console.log('data', this.data.order)
+    let orderCode = this.data.order.orderCode
     this.loadData(username)
 
     this.orderService.retrieveOrder(username, orderCode).subscribe(
@@ -62,9 +46,33 @@ export class OrderDetailsComponent implements OnInit {
         console.log(e)
         this.order = new Order(e.orderCode, e.type.name, e.status.name, e.date, e.customer.name, e.owner.username, e.checker.username)
         this.order.createdDate = e.date.toString().split('T')[0]
+
+        this.loadItem(orderCode)
       },
       error => {
         console.log(error)
+        this.loading = false
+      }
+    )
+
+   
+
+  }
+
+  loadItem(orderCode:string) {
+    this.total = 0
+    this.items = new Array<OrderItem>()
+    this.orderService.retrieveItemsOfOrder(orderCode).subscribe(
+      data => {
+        console.log("RETRIEVE", data.orderItems)
+        this.items = data.orderItems
+        for (var i = 0; i < this.items.length; ++i) {
+          this.total += this.items[i].price * this.items[i].quantity
+        }
+        this.loading = false
+      }, error => {
+        console.log("ERROR")
+        this.loading = false
       }
     )
   }
@@ -112,13 +120,68 @@ export class OrderDetailsComponent implements OnInit {
   openDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '400px';
-    let dialogRef = this.dialog.open(ItemComponent, dialogConfig);
+  }
+
+  itemAddClick() {
+    console.log("ADD")
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '400px';
+    dialogConfig.data = {
+      'from' : 'OrderDetails',
+      'orderCode' : this.order.code
+    }
+    let dialogRef: MatDialogRef<ItemComponent, any>
+    dialogRef = this.dialog.open(ItemComponent, dialogConfig);
+   
+    dialogRef.afterClosed().subscribe(
+      result => {
+        this.loadItem(this.order.code)
+      }
+    )
+  }
+
+  itemRemoveClick(barcode: string) {
+    console.log("REMOVE " + barcode)
+    console.log('this ', this.items)
+    this.loading = true
+    let index = -1
+    for (var i = 0; i < this.items.length; ++i) {
+      if (this.items[i].barcode === barcode) {
+        index = i
+        break
+      }
+    }
+
+    if (index !== -1) {
+      this.total -= this.items[index].price * this.items[index].quantity
+      this.items.splice(index, 1);
+      swal({
+        title: 'SUCCESS',
+        text: `Item ${barcode} removed from the order!`,
+        icon: 'success'
+      });
+      this.loading = false
+    }
+    this.loading = false
+  }
+
+  updateOrderInfo() {
+    this.loading = true
+    this.orderService.updateOrder(this.order).subscribe(
+      data => {
+        swal({
+          title: 'SUCCESS',
+          text: ' Order info has been updated',
+          icon: 'success'
+        });
+        this.loading = false
+      },
+      error => {
+        console.log("ERROR", error)
+        this.loading = false
+      }
+    )
+    
   }
 }
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}

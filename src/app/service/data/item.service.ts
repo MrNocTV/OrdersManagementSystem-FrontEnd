@@ -21,6 +21,10 @@ export class ItemService {
     })
   }
 
+  retrieveItem(barcode:string) {
+    return this.http.get<Item>(`${API_URL_PROD}/api/items/get/${barcode}`)
+  }
+
   retrieveItemsCount(): Observable<number> {
     return this.http.get<number>(`${API_URL_PROD}/api/items/count`)
   }
@@ -46,5 +50,9 @@ export class ItemService {
 
   getItemImages(barcode: string) {
     return this.http.get<any>(`${API_URL_PROD}/api/items/images/${barcode}`)
+  }
+
+  updateItem(item: Item) {
+    return this.http.post(`${API_URL_PROD}/api/items/update`, item)
   }
 }

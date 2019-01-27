@@ -79,7 +79,8 @@ export class ListItemsComponent implements OnInit, AfterViewInit {
       dialogRef = this.dialog.open(ItemComponent, dialogConfig);
     } else {
       dialogConfig.data = {
-        item
+        'item' : item,
+        'from' : 'ListItems'
       }
       dialogRef = this.dialog.open(ItemComponent, dialogConfig)
     }

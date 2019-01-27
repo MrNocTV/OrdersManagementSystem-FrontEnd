@@ -33,6 +33,13 @@
       <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
       <mat-cell class="status-cell" *matCellDef="let order">{{ order.status.name }}</mat-cell>
     </ng-container>
+    <ng-container matColumnDef="customColumn1">
+      <mat-header-cell *matHeaderCellDef fxFlex="5%">
+          <button mat-icon-button color="accent" (click)="openDialog(undefined)"><i class="fa fa-plus mat-icon"></i></button>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element" fxFlex="5%">
+      </mat-cell>
+    </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>

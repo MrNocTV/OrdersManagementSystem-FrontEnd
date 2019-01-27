@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { API_URL, API_URL_PROD } from 'src/app/app.constants';
-import { Order } from 'src/app/order/order.component';
+import { Order, OrderItem } from 'src/app/order/order.component';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -14,11 +14,11 @@ export class OrdersService {
   retrieveAllOrders(username: string, filter = '', sortOrder = '',
     pageNumber = 0, pageSize = 3): Observable<Order[]> {
     return this.http.get<Order[]>(`${API_URL_PROD}/api/orders/users/${username}`, {
-        params: new HttpParams()
-          .set('filter', filter)
-          .set('sortOrder', sortOrder)
-          .set('pageNumber', pageNumber.toString())
-          .set('pageSize', pageSize.toString())
+      params: new HttpParams()
+        .set('filter', filter)
+        .set('sortOrder', sortOrder)
+        .set('pageNumber', pageNumber.toString())
+        .set('pageSize', pageSize.toString())
     })
   }
 
@@ -36,5 +36,17 @@ export class OrdersService {
 
   countOrder(username: string) {
     return this.http.get<number>(`${API_URL_PROD}/api/orders/users/${username}/count`)
+  }
+
+  retrieveItemsOfOrder(orderCode: string) {
+    return this.http.get<any>(`${API_URL_PROD}/api/orders/${orderCode}/getItems`)
+  }
+
+  updateOrder(order: Order) {
+    return this.http.post(`${API_URL_PROD}/api/orders/update`, order);
+  }
+
+  addItem(orderItem : OrderItem) {
+    return this.http.post(`${API_URL_PROD}/api/orders/addItem`, orderItem)
   }
 }

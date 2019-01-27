@@ -90,11 +90,19 @@ export class OrderComponent implements OnInit {
     this.order.owner = username
     this.orderService.createOrder(this.order).subscribe(
       data =>{
-        console.log(data)
+        swal({
+          title: 'SUCCESS',
+          text: `Order ${this.order.code} has been added!`,
+          icon: 'success'
+        });
         this.closeDialog()
       }, 
       error =>{
-        console.log(error)
+        swal({
+          title: 'ERROR',
+          text: `Order ${this.order.code} cannot be added! ${error.error}`,
+          icon: 'error'
+        });
       }
     )
   }
@@ -124,4 +132,8 @@ export class Checker {
 
 export class Item {
   constructor(public barcode: string, public description:string, public priceIn:string, public priceOut:string, public unit:string, public inStock:string) {}
+}
+
+export class OrderItem {
+  constructor(public barcode: string, public orderCode: string, public quantity: number, public price: number, public unit: string, public description: string) { }
 }

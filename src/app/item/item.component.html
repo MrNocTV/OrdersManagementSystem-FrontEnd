@@ -29,44 +29,51 @@
   <div layout="row">
     <mat-form-field class="input-full-width">
       <mat-label>Barcode</mat-label>
-      <input matInput placeholder="Item's barcode" [(ngModel)]="item.barcode">
+      <input matInput placeholder="Item's barcode" [(ngModel)]="item.barcode" [disabled]="isDisabled()">
     </mat-form-field>
   </div>
   <div layout="row">
       <mat-form-field class="input-full-width">
-        <input matInput placeholder="Description" [(ngModel)]="item.description">
+        <input matInput placeholder="Description" [(ngModel)]="item.description" [disabled]="isDisabled()">
       </mat-form-field>
   </div>
 
   <div layout="row">
       <mat-form-field class="input-full-width">
-        <input matInput placeholder="Buy Price" [(ngModel)]="item.priceIn">
+        <input matInput placeholder="Buy Price" [(ngModel)]="item.priceIn" [disabled]="isDisabled()">
       </mat-form-field>
   </div>
 
   <div layout="row">
       <mat-form-field class="input-full-width">
-        <input matInput placeholder="Sell Price" [(ngModel)]="item.priceOut">
+        <input matInput placeholder="Sell Price" [(ngModel)]="item.priceOut" [disabled]="isDisabled()">
       </mat-form-field>
   </div>
   
   <div layout="row">
       <mat-form-field class="input-full-width">
-        <input matInput placeholder="In Stock" [(ngModel)]="item.inStock">
+        <input matInput placeholder="In Stock" [(ngModel)]="item.inStock" [disabled]="isDisabled()">
       </mat-form-field>
   </div>
 
   <div layout="row">
       <mat-form-field class="input-full-width">
-        <input matInput placeholder="Unit" [(ngModel)]="item.unit">
+        <input matInput placeholder="Unit" [(ngModel)]="item.unit" [disabled]="isDisabled()">
       </mat-form-field>
   </div>
-  <label for="file">Choose File</label>
-  <input type="file"
-         id="file"
-         (change)="handleFileInput($event.target.files)"
-         multiple
-         style="margin-bottom: 10px;">
+  <div *ngIf="fromOrderDetails">
+    <mat-form-field class="input-full-width">
+      <input matInput placeholder="Quantity" [(ngModel)]="quantity">
+    </mat-form-field>
+  </div>
+  <div *ngIf="!fromOrderDetails">
+    <label for="file">Choose File</label>
+    <input type="file"
+          id="file"
+          (change)="handleFileInput($event.target.files)"
+          multiple
+          style="margin-bottom: 10px;">
+  </div>
 </div>
 <div *ngIf="filesToUpload" class="progress">
     <div class="progress-bar progress-bar-info progress-bar-striped"
@@ -76,8 +83,8 @@
       {{progress.percentage}}%</div>
 </div>
   
-<div mat-dialog-actions *ngIf="show" align="center">
-  <button mat-button (click)="createItem()">Add</button>
+<div mat-dialog-actions *ngIf="show && !fromOrderDetails" align="center">
+  <button mat-button (click)="createItem()">Add to DB</button>
   <button mat-button (click)="closeDialog()">Cancel</button>
 </div>
 <div mat-dialog-actions *ngIf="!show" align="center">
@@ -85,3 +92,7 @@
   <button mat-button (click)="closeDialog()">Cancel</button>
 </div>
 
+<div mat-dialog-actions *ngIf="show && fromOrderDetails" align="center">
+  <button mat-button (click)="addToOrder()">Add to order</button>
+  <button mat-button (click)="closeDialog()">Cancel</button>
+</div>

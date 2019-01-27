@@ -8,6 +8,8 @@ import swal from 'sweetalert';
 import { ItemService } from '../service/data/item.service';
 import { Item } from '../list-items/item-datasource';
 import { HttpEventType } from '@angular/common/http';
+import { OrdersService } from '../service/data/orders.service';
+import { OrderItem } from '../order/order.component';
 
 
 @Component({
@@ -22,15 +24,24 @@ export class ItemComponent implements OnInit {
   show: boolean = true
   loadingItem: boolean = false
   parentData: Item
-  itemImageURLs : string[]
+  itemImageURLs: string[]
   title: string
+  barcodePicker: any = null
+  fromOrderDetails: boolean = false
+  orderCode: string = null
+  quantity: number = 0
 
   constructor(private dialogRef: MatDialogRef<ItemComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-    private itemService: ItemService) {
+    private itemService: ItemService, private orderService: OrdersService) {
     console.log('data from parent', data)
     if (this.data !== null) {
       this.parentData = data.item
       this.show = false
+      if (data.from === 'OrderDetails') {
+        this.show = true
+        this.fromOrderDetails = true
+        this.orderCode = data.orderCode
+      }
       this.title = 'Item Details'
     } else {
       this.title = 'Create Item'
@@ -49,7 +60,7 @@ export class ItemComponent implements OnInit {
           let fileNames = data.fileNames
           console.log(fileNames)
           this.itemImageURLs = new Array<string>()
-          for(var i = 0; i < fileNames.length; ++i) {
+          for (var i = 0; i < fileNames.length; ++i) {
             let itemImageURL = `${API_URL_PROD}/api/items/image/get/${fileNames[i]}`
             this.itemImageURLs.push(`${API_URL_PROD}/api/items/image/get/${fileNames[i]}`)
           }
@@ -60,7 +71,7 @@ export class ItemComponent implements OnInit {
           this.loadingItem = false
         }
       )
-      
+
     }
     configure(API_KEY, {
       engineLocation: "../../../assets/build"
@@ -90,15 +101,43 @@ export class ItemComponent implements OnInit {
           scanResult.barcodes.reduce((string, barcode) => {
             console.log(string + `${Barcode.Symbology.toHumanizedName(barcode.symbology)}: ${barcode.data}\n`)
             this.item.barcode = barcode.data
+            this.loadingItem = true
+            this.itemService.retrieveItem(this.item.barcode).subscribe(
+              data => {
+                console.log('DDD', data)
+                this.item.description = data.description
+                this.item.priceIn = data.priceIn
+                this.item.priceOut = data.priceOut
+                this.item.unit = data.unit
+                this.item.inStock = data.inStock
+                this.loadingItem = false
+              }, error => {
+                this.item = new Item(undefined, undefined, undefined, undefined, undefined, undefined)
+                this.item.barcode = barcode.data
+                this.loadingItem = false
+              }
+            )
             return string + `${Barcode.Symbology.toHumanizedName(barcode.symbology)}: ${barcode.data}\n`
           }, "");
         });
+        barcodePicker.onScanError(error => {
+          swal({
+            "title": "ERROR",
+            "text": "Something wrong with the scanner, please refresh the browser!",
+            "icon": "error"
+          })
+          barcodePicker.destroy()
+        })
+        this.barcodePicker = barcodePicker
       })
     }
   }
 
   public closeDialog() {
     this.dialogRef.close();
+    if (this.barcodePicker != null) {
+      this.barcodePicker.destroy()
+    }
   }
 
   createItem() {
@@ -137,7 +176,7 @@ export class ItemComponent implements OnInit {
     if (files.length > 0) {
       console.log("files length " + files.length)
       this.filesToUpload = new Array<File>()
-      for(var i = 0; i < files.length; ++i) {
+      for (var i = 0; i < files.length; ++i) {
         let selectedFile = files.item(i)
         let fileName = selectedFile.name
         let extn = fileName.substr(fileName.lastIndexOf('.') + 1);
@@ -211,10 +250,70 @@ export class ItemComponent implements OnInit {
   }
 
   editItem() {
-    swal({
-      title: "ERROR",
-      text: "Not implemented yet!!",
-      icon: "error",
-    })
+    this.itemService.updateItem(this.item).subscribe(
+      data => {
+        swal({
+          title: "SUCCESS",
+          text: 'Item updated successfully',
+          icon: "success",
+        })
+        this.closeDialog()
+      }, error => {
+        swal({
+          title: "ERROR",
+          text: error.error,
+          icon: "error",
+        })
+      }
+    )
+  }
+
+  addToOrder() {
+    console.log("Quantity " + this.quantity)
+    console.log("Ordercode " + this.orderCode)
+    this.loadingItem = true
+    if (this.quantity > this.item.inStock) {
+      swal({
+        title: "ERROR",
+        text: "Quantity must be smaller than inStock",
+        icon: "error"
+      })
+      this.loadingItem = false
+    } else if (this.quantity === 0) {
+      swal({
+        title: "ERROR",
+        text: "Quantity must be bigger than 0",
+        icon: "error"
+      })
+      this.loadingItem = false
+    } else {
+      let orderItem = new OrderItem(this.item.barcode, this.orderCode, this.quantity,
+        this.item.priceOut, this.item.unit, this.item.description)
+      this.orderService.addItem(orderItem).subscribe(
+        data => {
+          swal({
+            title: "SUCCESS",
+            text: "Item has been added into order",
+            icon: "success"
+          })
+          this.loadingItem = false
+          this.closeDialog()
+        }, error => {
+          swal({
+            title: "ERROR",
+            text: error.error,
+            icon: "error"
+          })
+          this.loadingItem = false
+        }
+      )
+
+    }
+
+  }
+
+  isDisabled() {
+    return this.fromOrderDetails === true
   }
 }
+
