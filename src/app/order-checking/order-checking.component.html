@@ -1,0 +1,40 @@
+<div class="row" style="padding-bottom: 20px;">
+    <mat-toolbar>Checking Order</mat-toolbar>
+</div>
+
+<div class="row">
+    <mat-form-field class="input-full-width">
+        <mat-label>Barcode</mat-label>
+        <input matInput #barcode placeholder="Item's barcode" [(ngModel)]="item.barcode" (keydown.enter)="detectBarcode(barcode.value)">
+    </mat-form-field>
+
+    <div style="position: absolute; right: 0; display: inline; margin-right: 5%; padding-top: 10px;">
+        {{ numberOfCheckedItems }} / {{ numberOfItems }}
+    </div>
+</div>
+
+<div class="row">
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+    <table>
+        <thead>
+          <tr>
+            <th>Barcode</th>
+            <th>Description</th>
+            <th>Unit</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of dataSource;" [ngClass]="item.checked ? 'make-green' : 'haha'">
+              <td>{{ item.barcode }}</td>
+              <td>{{ item.description }}</td>
+              <td>{{ item.unit }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.price * item.quantity |  number : '1.2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+</div>

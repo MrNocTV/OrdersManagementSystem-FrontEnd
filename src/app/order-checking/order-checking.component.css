@@ -1,0 +1,36 @@
+mat-table, mat-toolbar, mat-paginator {
+    width: 100%;
+}
+
+mat-paginator {
+    margin-top: 20px;
+}
+/* 
+mat-toolbar {
+    margin-bottom: 10px;
+} */
+
+mat-spinner {
+    position: relative;
+    margin-left: 50%;
+    margin-right: 50%;
+}
+
+mat-header-cell:last-of-type {
+    padding-right: 0px;
+}
+
+.make-green {
+    background-color: #AAF255;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table {
+    width: 100%;
+    margin-bottom: 20px;
+}

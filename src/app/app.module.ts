@@ -58,6 +58,7 @@ import { OrderDetailsComponent } from './order-details/order-details.component';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ItemComponent } from './item/item.component';
 import { ListItemsComponent } from './list-items/list-items.component';
+import { OrderCheckingComponent } from './order-checking/order-checking.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { ListItemsComponent } from './list-items/list-items.component';
     RegisterComponent,
     OrderDetailsComponent,
     ItemComponent,
-    ListItemsComponent
+    ListItemsComponent,
+    OrderCheckingComponent
   ],
   imports: [
     BrowserModule,

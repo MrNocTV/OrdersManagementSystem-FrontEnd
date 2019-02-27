@@ -25,11 +25,10 @@
     </div>
   </div>
 
-  <div id="scandit-barcode-picker" style="max-width: 1280px; max-height: 80%;"></div>
   <div layout="row">
     <mat-form-field class="input-full-width">
       <mat-label>Barcode</mat-label>
-      <input matInput placeholder="Item's barcode" [(ngModel)]="item.barcode" [disabled]="isDisabled()">
+      <input matInput #barcode placeholder="Item's barcode" [(ngModel)]="item.barcode" (keydown.enter)="detectBarcode(barcode.value)">
     </mat-form-field>
   </div>
   <div layout="row">

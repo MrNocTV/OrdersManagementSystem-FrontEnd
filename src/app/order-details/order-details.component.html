@@ -92,5 +92,6 @@
     <mat-label>Total</mat-label>
     <input matInput readonly="true" [ngModel]="total | number : '1.2'" (ngModelChange)="total=$event">
   </mat-form-field>
-
+  
+  <button mat-button *ngIf="order.status === 'Being checked'" (click)="toCheckingPage()">Go to checking page</button>
 </div>

@@ -1,8 +1,6 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import Quagga from 'quagga';
-import { Barcode, BarcodePicker, ScanSettings, configure } from "scandit-sdk";
-import { API_KEY, API_KEY_PROD, API_URL_PROD } from '../app.constants';
+import { API_URL_PROD } from '../app.constants';
 import { isNumber } from 'util';
 import swal from 'sweetalert';
 import { ItemService } from '../service/data/item.service';
@@ -71,65 +69,6 @@ export class ItemComponent implements OnInit {
           this.loadingItem = false
         }
       )
-
-    }
-    configure(API_KEY, {
-      engineLocation: "../../../assets/build"
-    });
-
-    if (this.show) {
-      BarcodePicker.create(document.getElementById("scandit-barcode-picker"), {
-        playSoundOnScan: true,
-        vibrateOnScan: true
-      }).then((barcodePicker) => {
-        // barcodePicker is ready here to be used (rest of the tutorial code should go here)
-        const scanSettings = new ScanSettings({
-          enabledSymbologies: [
-            Barcode.Symbology.EAN8,
-            Barcode.Symbology.EAN13,
-            Barcode.Symbology.UPCA,
-            Barcode.Symbology.UPCE,
-            Barcode.Symbology.CODE128,
-            Barcode.Symbology.CODE39,
-            Barcode.Symbology.CODE93,
-            Barcode.Symbology.INTERLEAVED_2_OF_5
-          ],
-          codeDuplicateFilter: 1000
-        });
-        barcodePicker.applyScanSettings(scanSettings);
-        barcodePicker.onScan((scanResult) => {
-          scanResult.barcodes.reduce((string, barcode) => {
-            console.log(string + `${Barcode.Symbology.toHumanizedName(barcode.symbology)}: ${barcode.data}\n`)
-            this.item.barcode = barcode.data
-            this.loadingItem = true
-            this.itemService.retrieveItem(this.item.barcode).subscribe(
-              data => {
-                console.log('DDD', data)
-                this.item.description = data.description
-                this.item.priceIn = data.priceIn
-                this.item.priceOut = data.priceOut
-                this.item.unit = data.unit
-                this.item.inStock = data.inStock
-                this.loadingItem = false
-              }, error => {
-                this.item = new Item(undefined, undefined, undefined, undefined, undefined, undefined)
-                this.item.barcode = barcode.data
-                this.loadingItem = false
-              }
-            )
-            return string + `${Barcode.Symbology.toHumanizedName(barcode.symbology)}: ${barcode.data}\n`
-          }, "");
-        });
-        barcodePicker.onScanError(error => {
-          swal({
-            "title": "ERROR",
-            "text": "Something wrong with the scanner, please refresh the browser!",
-            "icon": "error"
-          })
-          barcodePicker.destroy()
-        })
-        this.barcodePicker = barcodePicker
-      })
     }
   }
 
@@ -142,15 +81,20 @@ export class ItemComponent implements OnInit {
 
   createItem() {
     let validateMessage = this.validateItem()
-    if (validateMessage === 'ok') {
-      this.uploadImage()
-    } else {
-      swal({
-        title: "ERROR",
-        text: 'Error: ' + validateMessage,
-        icon: "error",
-      })
-    }
+    this.itemService.retrieveItem(this.item.barcode).subscribe(
+      data => {
+        swal({
+          title: "ERROR",
+          text: 'Error: Duplicated item',
+          icon: "error",
+        })
+      }, 
+      error => {
+        if (validateMessage === 'ok') {
+          this.uploadImage()
+        }
+      }
+    )
   }
 
   validateItem(): string {
@@ -167,8 +111,11 @@ export class ItemComponent implements OnInit {
     if (this.item.barcode == '')
       return 'barcode must be included'
 
-    if (this.filesToUpload === null)
+    if (this.filesToUpload === null || this.filesToUpload === undefined)
       return "item's image(s) must be included"
+
+    if (this.item.unit === undefined || this.item.unit === null)
+      return "item's unit must be included"
     return 'ok'
   }
 
@@ -288,7 +235,7 @@ export class ItemComponent implements OnInit {
       this.loadingItem = false
     } else {
       let orderItem = new OrderItem(this.item.barcode, this.orderCode, this.quantity,
-        this.item.priceOut, this.item.unit, this.item.description)
+        this.item.priceOut, this.item.unit, this.item.description, false)
       this.orderService.addItem(orderItem).subscribe(
         data => {
           swal({
@@ -314,6 +261,32 @@ export class ItemComponent implements OnInit {
 
   isDisabled() {
     return this.fromOrderDetails === true
+  }
+
+  detectBarcode(barcode:string) {
+    console.log(barcode + " detected")
+    this.loadingItem = true
+    this.itemService.retrieveItem(barcode).subscribe(
+      data => {
+        console.log("data " + data);
+        this.item.description = data.description
+        this.item.inStock = data.inStock
+        this.item.priceIn = data.priceIn
+        this.item.priceOut = data.priceOut
+        this.item.barcode = barcode
+        this.loadingItem = false
+      },
+      error => {
+        if (this.fromOrderDetails && this.show) {
+          swal({
+            title: "ERROR",
+            text: "FAILED to retrieve item." + error.error,
+            icon: "error"
+          })
+        }
+        this.loadingItem = false
+      }
+    )
   }
 }
 

@@ -49,4 +49,12 @@ export class OrdersService {
   addItem(orderItem : OrderItem) {
     return this.http.post(`${API_URL_PROD}/api/orders/addItem`, orderItem)
   }
+
+  removeItem(orderCode: string, barcode: string) {
+    return this.http.get(`${API_URL_PROD}/api/orders/${orderCode}/removeItem/${barcode}`)
+  }
+
+  checkItem(orderCode: string, barcode: string) {
+    return this.http.post(`${API_URL_PROD}/api/orders/${orderCode}/checkItem/${barcode}`, {})
+  }
 }

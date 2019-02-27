@@ -135,5 +135,5 @@ export class Item {
 }
 
 export class OrderItem {
-  constructor(public barcode: string, public orderCode: string, public quantity: number, public price: number, public unit: string, public description: string) { }
+  constructor(public barcode: string, public orderCode: string, public quantity: number, public price: number, public unit: string, public description: string, public checked: boolean) { }
 }

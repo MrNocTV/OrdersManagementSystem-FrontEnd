@@ -29,6 +29,9 @@ export class ItemsDataSource implements DataSource<Item> {
         this.itemService.retrieveItems(filter, sortDirection, pageIndex, pageSize).pipe(
             catchError(() => of([])),
             finalize(() => this.loadingSubject.next(false))
-        ).subscribe(items => this.itemsSubject.next(items))
+        ).subscribe(items => {
+            console.log(items)
+            this.itemsSubject.next(items)
+        })
     }
 }

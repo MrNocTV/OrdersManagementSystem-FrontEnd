@@ -3,7 +3,7 @@ import { MatTableDataSource, MatDialog, MatDialogConfig, MAT_DIALOG_DATA, MatDia
 import { Order, Status, Type, Customer, Checker, Item, OrderItem } from '../order/order.component';
 import { OrdersService } from '../service/data/orders.service';
 import { AuthenticationService } from '../service/authentication.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OrderTypeService } from '../service/data/order-type.service';
 import { OrderStatusService } from '../service/data/order-status.service';
 import { CustomerService } from '../service/data/customer.service';
@@ -20,11 +20,7 @@ export class OrderDetailsComponent implements OnInit {
   typeArr: Type[] = new Array<Type>()
   customerArr: Customer[] = new Array<Customer>()
   checkerArr: Checker[] = new Array<Checker>()
-  items: OrderItem[] = [
-    new OrderItem("123", "11111", 12, 23.4, "ccc", "dwda ds"),
-    new OrderItem("1232", "11111", 12, 23.4, "cscc", "dwd2a ds"),
-    new OrderItem("1233", "11111", 12, 23.4, "cccs", "dswda ds"),
-  ]
+  items: OrderItem[] = []
   loading: boolean = true
   total: number = 0
 
@@ -32,7 +28,7 @@ export class OrderDetailsComponent implements OnInit {
     private orderTypeService: OrderTypeService, private orderStatusServie: OrderStatusService,
     private customerService: CustomerService, private userService: UserService,
     private dialogRef: MatDialogRef<OrderDetailsComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog, private router:Router) { }
 
   ngOnInit() {
     this.order = new Order(undefined, undefined, undefined, undefined, undefined, undefined, undefined)
@@ -54,9 +50,6 @@ export class OrderDetailsComponent implements OnInit {
         this.loading = false
       }
     )
-
-   
-
   }
 
   loadItem(orderCode:string) {
@@ -123,21 +116,28 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   itemAddClick() {
-    console.log("ADD")
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '400px';
-    dialogConfig.data = {
-      'from' : 'OrderDetails',
-      'orderCode' : this.order.code
-    }
-    let dialogRef: MatDialogRef<ItemComponent, any>
-    dialogRef = this.dialog.open(ItemComponent, dialogConfig);
-   
-    dialogRef.afterClosed().subscribe(
-      result => {
-        this.loadItem(this.order.code)
+    if (this.order.status !== 'On Creation') {
+      swal({
+        title: 'ERROR',
+        text: `Cannot add item, order is being checked`,
+        icon: 'error'
+      });
+    } else {
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.width = '400px';
+      dialogConfig.data = {
+        'from' : 'OrderDetails',
+        'orderCode' : this.order.code
       }
-    )
+      let dialogRef: MatDialogRef<ItemComponent, any>
+      dialogRef = this.dialog.open(ItemComponent, dialogConfig);
+    
+      dialogRef.afterClosed().subscribe(
+        result => {
+          this.loadItem(this.order.code)
+        }
+      )
+    }
   }
 
   itemRemoveClick(barcode: string) {
@@ -152,17 +152,29 @@ export class OrderDetailsComponent implements OnInit {
       }
     }
 
-    if (index !== -1) {
-      this.total -= this.items[index].price * this.items[index].quantity
-      this.items.splice(index, 1);
-      swal({
-        title: 'SUCCESS',
-        text: `Item ${barcode} removed from the order!`,
-        icon: 'success'
-      });
-      this.loading = false
-    }
-    this.loading = false
+    let orderCode = this.items[index].orderCode
+    this.orderService.removeItem(orderCode, barcode).subscribe(
+      data => {
+        if (index !== -1) {
+          this.total -= this.items[index].price * this.items[index].quantity
+          this.items.splice(index, 1);
+          swal({
+            title: 'SUCCESS',
+            text: `Item ${barcode} removed from the order!`,
+            icon: 'success'
+          });
+          this.loading = false
+        }
+      },
+      error => {
+        swal({
+          title: 'ERROR',
+          text: `Remove item failed`,
+          icon: 'error'
+        });
+        this.loading = false
+      }
+    )
   }
 
   updateOrderInfo() {
@@ -181,7 +193,11 @@ export class OrderDetailsComponent implements OnInit {
         this.loading = false
       }
     )
-    
+  }
+
+  toCheckingPage() {
+    this.dialogRef.close()
+    this.router.navigate(['/checking-order'], {queryParams: {orderCode: this.order.code}})
   }
 }
 
